@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../_shared_assets/deps/reconnecting-websocket.min.js"></script>
+    <script src="../_shared_assets/deps/countUp.js"></script>
+</head>
+
+<body>
+  <div id="main">
+    <div id="startingScene">
+      <div id="component">
+        <div id="logoRow">
+          <img id="cloud_1" class="bobble" src="../_shared_assets/design/cloud_1.png">
+          <img id="cloud_2" class="bobbleDelay" src="../_shared_assets/design/cloud_2.png">
+          <img id="logo" src="../_shared_assets/design/logo.png">
+        </div>
+        <div id="typoRow">
+          <img id="mainTypo" src="../_shared_assets/design/main_typo.png">
+          <img id="subTypo" src="../_shared_assets/design/sub_typo.png">
+        </div>
+      </div>
+    </div>
+    <div id="resultScene">
+      <div id="leftSide">
+        <div id="leftTeamName">チーム１</div>
+        <div id="leftTeamMembers">Player 1, Player 2, Player 3, Player 4, Player 5, Player 6</div>
+        <div id="leftScore">0</div>
+      </div>
+      <div id="rightSide">
+        <div id="rightTeamName">チーム１</div>
+        <div id="rightTeamMembers">Player 1, Player 2, Player 3, Player 4, Player 5, Player 6</div>
+        <div id="rightScore">0</div>
+      </div>
+      <div id="vs">VS</div>
+      <div id="title">
+        <img id="result_typo" src="../_shared_assets/design/main_typo.png">
+        <div id="winnerText">WINNER</div>
+      </div>
+    </div>
+    <img id="background" src="../_shared_assets/design/intermission_bg.png">
+  </div>
+  <div id="controlPanel">
+    <div id="sceneButton">CURRENT SCENE: STARTING</div>
+    <div id="turnButton">CURRENT MATCH: N.A</div>
+  </div>
+	<script src="index.js"></script>
+  </body>
+  
+  </html>

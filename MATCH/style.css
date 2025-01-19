@@ -199,10 +199,27 @@
     border: 3px solid white;
     background-color: rgb(255, 252, 146,0);
     margin-inline: 4px;
+    transition: 250ms ease-in-out;
 }
 
 .scoreFill {
     background-color: #FFFC92;
+}
+
+#scoreBlue>.score.scoreFillAnimate {
+	animation: addScore 500ms forwards;
+}
+
+#scoreRed>.score.scoreFillAnimate {
+	animation: addScore 500ms forwards;
+}
+
+#scoreBlue>.score.scoreNoneAnimate {
+	animation: removeScore 500ms forwards;
+}
+
+#scoreRed>.score.scoreNoneAnimate {
+	animation: removeScore 500ms forwards;
 }
 
 #leftTeamPick, #rightTeamPick {
@@ -1024,5 +1041,23 @@
 	100% {
         opacity: 1;
         transform: translateX(0);
+	}
+}
+
+@keyframes addScore {
+	from {
+        background-color: rgba(0,0,0,0);
+	}
+	to {
+		background-color: #FFFC92;
+	}
+}
+
+@keyframes removeScore {
+	from {
+		background-color: #FFFC92;
+	}
+	to {
+        background-color: rgba(0,0,0,0);
 	}
 }

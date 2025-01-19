@@ -1,0 +1,306 @@
+@font-face {
+    font-family: "Poppins-Regular";
+    src: url("../_shared_assets/fonts/Poppins-Regular.ttf");
+}
+
+@font-face {
+    font-family: "Poppins-Bold";
+    src: url("../_shared_assets/fonts/Poppins-Bold.ttf");
+}
+
+@font-face {
+    font-family: "Poppins-BoldItalic";
+    src: url("../_shared_assets/fonts/Poppins-BoldItalic.ttf");
+}
+
+@font-face {
+    font-family: "LINESeed-Regular";
+    src: url("../_shared_assets/fonts/LINESeedJP_TTF_Rg.ttf");
+    unicode-range: U+3040-309F, U+30A0-30FF, U+4E00-9FFF; /* Hiragana, Katakana, Kanji */
+}
+
+@font-face {
+    font-family: "LINESeed-Bold";
+    src: url("../_shared_assets/fonts/LINESeedJP_TTF_Bd.ttf");
+}
+
+#main {
+    position: absolute;
+    top:0px;
+    left:0px;
+    width:1920px;
+    height:1080px;
+}
+
+#background {
+    position: absolute;
+    top:0px;
+    left:0px;
+    width:1920px;
+    height:1080px;
+    z-index:-3;
+}
+
+#startingScene {
+    position: absolute;
+    top:0px;
+    left:0px;
+    width:1920px;
+    height:1080px;
+}
+
+#component {
+    animation: bobblescale 3s ease-in-out infinite;
+    position: absolute;
+    top:0px;
+    left:0px;
+    width:1920px;
+    height:1080px;
+}
+
+#logoRow {
+    width:1920px;
+    position:absolute;
+    top:191px;
+    left:0px;
+    display:flex;
+    justify-content: center;
+    transition: 0.5s cubic-bezier(0.000, 0.125, 0.000, 1.005);
+}
+
+#typoRow {
+    width:1920px;
+    position:absolute;
+    top:703px;
+    left:0px;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#subTypo {
+    margin-top: 30px;
+}
+
+#cloud_1 {
+    position:absolute;
+    left:494px;
+    top:311px;
+    transition: 1s cubic-bezier(0.000, 0.125, 0.000, 1.005);
+}
+
+#cloud_2 {
+    position:absolute;
+    left:1234px;
+    top:144px;
+    transition: 1s cubic-bezier(0.000, 0.125, 0.000, 1.005);
+}
+
+.bobble {
+    animation: bobble 5s ease-in-out infinite;
+}
+
+.bobbleDelay {
+    animation: bobble 5s ease-in-out infinite;
+    animation-delay: -2s;
+}
+
+
+
+/* CONTROL PANEL */
+#controlPanel {
+    width:1920px;
+    height:200px;
+    z-index:0;
+    position:absolute;
+    left:0px;
+    top:1085px;
+    display:flex;
+    align-items: center;
+    font-size: 30px;
+    font-family: 'Poppins-Regular', 'LINESeed-Regular', sans-serif;
+    font-weight: normal;
+    color: white;
+    background-color: #3EC7A0;
+    user-select: none;
+}
+
+#sceneButton {
+    background:rgb(27, 139, 4);
+    color:white;
+    width:400px;
+    height:150px;
+    border-radius: 20px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-inline: 25px;
+    padding-inline:10px;
+    transition: 250ms ease-in-out;
+}
+
+#turnButton {
+    background:rgb(49, 41, 33);
+    color:rgba(255, 255, 255, 0.473);
+    width:800px;
+    height:150px;
+    border-radius: 20px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-inline: 25px;
+    padding-inline:20px;
+    transition: 250ms ease-in-out;
+}
+
+#autoButton {
+    background:#007A14;
+    color:white;
+    width:400px;
+    height:150px;
+    border-radius: 20px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-inline: 25px;
+    transition: 250ms ease-in-out;
+}
+
+#resultScene {
+    position:absolute;
+    top:0px;
+    left:0px;
+    width:1920px;
+    height:1080px;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#leftSide, #rightSide {
+    width:45%;
+    height:inherit;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#leftTeamName, #rightTeamName {
+    font-family:'LINESeed-Bold';
+    color:white;
+    font-size:42px;
+    margin-top:250px;
+    width:fit-content;
+    text-align: center;
+    opacity:0;
+}
+
+#leftTeamMembers, #rightTeamMembers {
+    font-family:'Poppins-Bold';
+    color:white;
+    font-size:24px;
+    width:500px;
+    height:100px;
+    text-align: center;
+    opacity:0;
+}
+
+#leftScore, #rightScore {
+    display:flex;
+    height: 400px;
+    width:320px;
+    background-color: white;
+    align-items: center;
+    justify-content: center;
+    font-family:'Poppins-Bold';
+    font-size:200px;
+    color:#47c471;
+    transition:500ms ease-in-out;
+    opacity:0;
+}
+
+#vs {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    font-family:'Poppins-Bold';
+    font-size:124px;
+    color:white;
+    position:absolute;
+    width:1920px;
+    left:0px;
+    top:520px;
+    opacity:0;
+}
+
+#title {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    font-family:'Poppins-BoldItalic';
+    color:white;
+    position:absolute;
+    width:1920px;
+    left:0px;
+    top:130px;
+    opacity:0;
+}
+
+#result_typo {
+    height:26px;
+}
+
+#winnerText {
+    font-size:54px;
+    letter-spacing: 6px; /* Increase spacing between characters */
+    margin-top:-10px;
+}
+
+@keyframes bobble {
+    0% {
+        transform: translateY(-10px);
+    }
+    50% {
+        transform: translateY(10px);
+    }
+    100% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes bobblescale {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.99);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeOutRight {
+    0% {
+        opacity:1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity:0;
+        transform: translateX(400px);
+    }
+}
+
+@keyframes fadeInLeft {
+    0% {
+        opacity:0;
+        transform: translateX(-400px);
+    }
+    100% {
+        opacity:1;
+        transform: translateX(0);
+    }
+}

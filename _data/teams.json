@@ -1,0 +1,8 @@
+[
+    { "teamName": "中国・四国", "teamMembers": ["Teacchyyy", "yukin1014", "----", "Hashign_z"]},
+    { "teamName": "北海道・東北", "teamMembers": ["player 1", "player 2", "player 3", "player 4", "player 5", "player 6"]},
+    { "teamName": "関東", "teamMembers": ["player 1", "player 2", "player 3", "player 4", "player 5", "player 6"]},
+    { "teamName": "中部", "teamMembers": ["player 1", "player 2", "player 3", "player 4", "player 5", "player 6"]},
+    { "teamName": "近畿", "teamMembers": ["player 1", "player 2", "player 3", "player 4", "player 5", "player 6"]},
+    { "teamName": "九州", "teamMembers": ["player 1", "player 2", "player 3", "player 4", "player 5", "player 6"]}
+]

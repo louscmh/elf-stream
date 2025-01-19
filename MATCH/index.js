@@ -403,7 +403,7 @@ socket.onmessage = event => {
 		for (var i = 0; i < scoreBlueTemp; i++) {
 			if (scoreEvent === "blue-add" && i === scoreBlueTemp - 1) {
 				let scoreFill = document.createElement("div");
-				scoreFill.setAttribute("class", "score scoreFill");
+				scoreFill.setAttribute("class", "score scoreFillAnimate");
 				scoreBlue.appendChild(scoreFill);
 			} else {
 				let scoreFill = document.createElement("div");
@@ -414,7 +414,7 @@ socket.onmessage = event => {
 		for (var i = 0; i < bestOfTemp - scoreBlueTemp; i++) {
 			if (scoreEvent === "blue-remove" && i === 0) {
 				let scoreNone = document.createElement("div");
-				scoreNone.setAttribute("class", "score");
+				scoreNone.setAttribute("class", "score scoreNoneAnimate");
 				scoreBlue.appendChild(scoreNone);
 			} else {
 				let scoreNone = document.createElement("div");
@@ -428,7 +428,7 @@ socket.onmessage = event => {
 		for (var i = 0; i < bestOfTemp - scoreRedTemp; i++) {
 			if (scoreEvent === "red-remove" && i === bestOfTemp - scoreRedTemp - 1) {
 				let scoreNone = document.createElement("div");
-				scoreNone.setAttribute("class", "score");
+				scoreNone.setAttribute("class", "score scoreNoneAnimate");
 				scoreRed.appendChild(scoreNone);
 			} else {
 				let scoreNone = document.createElement("div");
@@ -439,7 +439,7 @@ socket.onmessage = event => {
 		for (var i = 0; i < scoreRedTemp; i++) {
 			if (scoreEvent === "red-add" && i === 0) {
 				let scoreFill = document.createElement("div");
-				scoreFill.setAttribute("class", "score scoreFill");
+				scoreFill.setAttribute("class", "score scoreFillAnimate");
 				scoreRed.appendChild(scoreFill);
 			} else {
 				let scoreFill = document.createElement("div");
