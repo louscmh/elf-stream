@@ -72,10 +72,16 @@ let rightTeamName = document.getElementById("rightTeamName");
 let rightTeamMembers = document.getElementById("rightTeamMembers");
 let vs = document.getElementById("vs");
 
+let sceneButton = document.getElementById("sceneButton");
+let hideButton = document.getElementById("hideButton");
+let turnButton = document.getElementById("turnButton");
+
 let resultTitle = document.getElementById("title");
+let main = document.getElementById("main");
 
 // PLACEHOLDER VARS /////////////////////////////////////////////////////////////////
 let currentScene = "start"
+let currentlyHidden = false;
 let bestOfTemp;
 let scoreBlueTemp;
 let scoreRedTemp;
@@ -93,6 +99,25 @@ sceneButton.addEventListener("click", async function(event) {
         await promptStart();
         sceneButton.style.backgroundColor = "rgb(27, 139, 4)";
         sceneButton.innerHTML = "CURRENT SCENE: STARTING";
+    }
+})
+
+hideButton.addEventListener("click", async function(event) {
+    if (currentlyHidden) {
+        currentlyHidden = false;
+        hideButton.style.backgroundColor = "rgb(131, 65, 65)";
+        hideButton.innerHTML = "REVEAL MATCH";
+        setTimeout(function() {
+            main.style.opacity = 1;
+        }, 0);
+    }
+    else {
+        currentlyHidden = true;
+        hideButton.style.backgroundColor = "rgb(139, 4, 4)";
+        hideButton.innerHTML = "HIDE MATCH";
+        setTimeout(function() {
+            main.style.opacity = 0;
+        }, 0);
     }
 })
 

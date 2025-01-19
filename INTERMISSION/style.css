@@ -30,6 +30,7 @@
     left:0px;
     width:1920px;
     height:1080px;
+    transition: 500ms ease-in-out;
 }
 
 #background {
@@ -127,6 +128,21 @@
 
 #sceneButton {
     background:rgb(27, 139, 4);
+    color:white;
+    width:400px;
+    height:150px;
+    border-radius: 20px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-inline: 25px;
+    padding-inline:10px;
+    transition: 250ms ease-in-out;
+}
+
+#hideButton {
+    background:rgb(139, 4, 4);
     color:white;
     width:400px;
     height:150px;

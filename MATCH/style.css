@@ -386,7 +386,7 @@
 
 .leftArrow {
     position: absolute;
-    top:26px;
+    top:20px;
     left: -30px;
     font-size: 24px;
     font-family: 'Poppins-Bold';
@@ -394,7 +394,7 @@
 
 .rightArrow {
     position: absolute;
-    top:26px;
+    top:20px;
     right: -30px;
     font-size: 24px;
     font-family: 'Poppins-Bold';
@@ -576,6 +576,11 @@
     text-align: center;
     margin-inline: 25px;
     transition: 250ms ease-in-out;
+}
+
+#leftPlayerOne, #rightPlayerOne {
+    font: "Poppins-Bold";
+    font-size:16px;
 }
 
 #gameplayBackground {

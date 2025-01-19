@@ -15,12 +15,19 @@ window.addEventListener("contextmenu", (e) => e.preventDefault());
 
 // SHOWCASE DATES DATA /////////////////////////////////////////////////////////////////
 let dates = [];
+let teams = [];
+let hasImported = false;
 (async () => {
     try {
         const jsonData = await $.getJSON("../_data/dates.json");
         jsonData.map((round) => {
             dates.push(round);
         });
+        const jsonData2 = await $.getJSON("../_data/teams.json");
+        jsonData2.map((team) => {
+            teams.push(team);
+        });
+        hasImported = true;
     } catch (error) {
         console.error("Could not read JSON file", error);
     }
@@ -56,9 +63,7 @@ let autoButton = document.getElementById("autoButton");
 let sceneContainer = document.getElementById("main");
 let pickingText = document.getElementById("pickingText");
 let leftPlayerOne = document.getElementById("leftPlayerOne");
-let leftPlayerTwo = document.getElementById("leftPlayerTwo");
 let rightPlayerOne = document.getElementById("rightPlayerOne");
-let rightPlayerTwo = document.getElementById("rightPlayerTwo");
 let currentPickTeam = document.getElementById("currentPickTeam");
 let currentlyPicking = document.getElementById("currentlyPicking");
 
@@ -321,6 +326,7 @@ let team1 = "Red",
     team2 = "Blue";
 
 socket.onmessage = event => {
+    if (!hasImported) return;
     let data = JSON.parse(event.data);
 
     if (data.tourney.manager.bools.scoreVisible) {
@@ -352,12 +358,14 @@ socket.onmessage = event => {
     if (tempLeft != playerOne.innerHTML) {
         setTimeout(function(event) {
             playerOne.innerHTML = tempLeft;
+            leftPlayerOne.innerHTML = teams.find(team => team["teamName"] === tempLeft)?.["teamMembers"].join(", ");
             leftTeam = tempLeft;
         }, 150);
     }
     if (tempRight != playerTwo.innerHTML) {
         setTimeout(function(event) {
             playerTwo.innerHTML = tempRight;
+            rightPlayerOne.innerHTML = teams.find(team => team["teamName"] === tempRight)?.["teamMembers"].join(". ");
             rightTeam = tempRight;
         }, 150);
     }
