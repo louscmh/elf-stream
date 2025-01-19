@@ -1,0 +1,19 @@
+[
+    { "beatmapId": 3168035, "pick": "FM1", "mappers": ["gazimal","Age17", "Satelite"]},
+    { "beatmapId": 4260723, "pick": "FM2", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 4451972, "pick": "FM3", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 1245003, "pick": "FM4", "mappers": ["gazimal","Age17", "Satelite"]},
+    { "beatmapId": 2120381, "pick": "FM5", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 2698218, "pick": "FM6", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 2307722, "pick": "HD1", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 2881614, "pick": "HD2", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 4538482, "pick": "HD3", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 2680280, "pick": "HR1", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 3513203, "pick": "HR2", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 3985524, "pick": "HR3", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 4233875, "pick": "DT1", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 4257290, "pick": "DT2", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 4179279, "pick": "DT3", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 2798530, "pick": "DT4", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]},
+    { "beatmapId": 4705032, "pick": "TB", "mappers": ["Mapper 1","Mapper 2", "Mapper 3"]}
+]
