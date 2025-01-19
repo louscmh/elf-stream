@@ -100,6 +100,8 @@ let currentTurn;
 let autoPick = false;
 let leftTeam;
 let rightTeam;
+let leftTeamStars;
+let rightTeamStars;
 const beatmaps = new Set(); // Store beatmapID;
 const bms = []; // Store beatmaps
 
@@ -155,11 +157,13 @@ sceneButton.addEventListener("click", function(event) {
         sceneButton.style.backgroundColor = "rgb(255, 128, 128)";
         mappoolContainer.style.animation = "sceneChangeOutRight 1.5s ease-in-out";
         chatbox.style.animation = "sceneChangeOutLeft 1.5s ease-in-out";
-        hasPick ? null : currentlyPicking.style.animation = "sceneChangeOutLeft 1.5s ease-in-out";
         sceneBackground.style.clipPath = "polygon(0 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 50%, 100% 50%, 100% 50%)";
         chatbox.style.opacity = 1;
-        hasPick ? null : currentlyPicking.style.opacity = 1;
-        hasPick ? null : currentlyPicking.style.transform = "translateX(0)";
+        if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
+            hasPick ? null : currentlyPicking.style.animation = "sceneChangeOutLeft 1.5s ease-in-out";
+            hasPick ? null : currentlyPicking.style.opacity = 1;
+            hasPick ? null : currentlyPicking.style.transform = "translateX(0)";
+        }
         mappoolContainer.style.opacity = 1;
     }
 })
@@ -171,10 +175,12 @@ turnButton.addEventListener("click", async function(event) {
         currentTurn = 1;
         currentScene == 1 ? null : currentPickTeam.innerHTML = `${currentTurn == 0 ? playerOne.innerHTML : playerTwo.innerHTML}`;
         turnButton.innerHTML = "CURRENTLY PICKING: RIGHT TEAM";
-        currentScene == 1 ? null : currentlyPicking.style.display = "initial";
-        currentScene == 1 ? null : currentlyPicking.style.opacity = 1;
-        currentScene == 1 ? null : currentlyPicking.style.transform = "translateX(0)";
-        currentScene == 1 ? null : currentlyPicking.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+        if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
+            currentScene == 1 ? null : currentlyPicking.style.display = "initial";
+            currentScene == 1 ? null : currentlyPicking.style.opacity = 1;
+            currentScene == 1 ? null : currentlyPicking.style.transform = "translateX(0)";
+            currentScene == 1 ? null : currentlyPicking.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+        }
         turnButton.style.backgroundColor = "#08ac7dff";
         playerOnePick.style.opacity = "0";
         playerTwoPick.style.opacity = "0";
@@ -184,10 +190,12 @@ turnButton.addEventListener("click", async function(event) {
         currentTurn = 0;
         currentScene == 1 ? null : currentPickTeam.innerHTML = `${currentTurn == 0 ? playerOne.innerHTML : playerTwo.innerHTML}`;
         turnButton.innerHTML = "CURRENTLY PICKING: LEFT TEAM";
-        currentScene == 1 ? null : currentlyPicking.style.display = "initial";
-        currentScene == 1 ? null  : currentlyPicking.style.opacity = 1;
-        currentScene == 1 ? null  : currentlyPicking.style.transform = "translateX(0)";
-        currentScene == 1 ? null : currentlyPicking.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+        if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
+            currentScene == 1 ? null : currentlyPicking.style.display = "initial";
+            currentScene == 1 ? null : currentlyPicking.style.opacity = 1;
+            currentScene == 1 ? null : currentlyPicking.style.transform = "translateX(0)";
+            currentScene == 1 ? null : currentlyPicking.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+        }
         turnButton.style.backgroundColor = "#6c9e07ff";
         playerOnePick.style.opacity = "0";
         playerTwoPick.style.opacity = "0";
@@ -372,6 +380,8 @@ socket.onmessage = event => {
 
 		// Courtesy of Victim-Crasher
 		bestOfTemp = Math.ceil(data.tourney.manager.bestOF / 2);
+        leftTeamStars = data.tourney.manager.stars.left;
+        rightTeamStars = data.tourney.manager.stars.right
 
         if ((bestOfTemp-data.tourney.manager.stars.left) == 1 && (bestOfTemp-data.tourney.manager.stars.right) == 1) {
             currentlyPicking.style.opacity = 0;
