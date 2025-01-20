@@ -17,6 +17,7 @@ window.addEventListener("contextmenu", (e) => e.preventDefault());
 let dates = [];
 let teams = [];
 let hasImported = false;
+let scoreTracker;
 (async () => {
     try {
         const jsonData = await $.getJSON("../_data/dates.json");
@@ -27,6 +28,7 @@ let hasImported = false;
         jsonData2.map((team) => {
             teams.push(team);
         });
+        scoreTracker = new ScoreTracker();
         hasImported = true;
     } catch (error) {
         console.error("Could not read JSON file", error);
@@ -174,7 +176,6 @@ sceneButton.addEventListener("click", function(event) {
 })
 
 turnButton.addEventListener("click", async function(event) {
-    console.log("happened");
     if (currentTurn == 0 && banCount == 2) {
         await stopPulse();
         currentTurn = 1;
@@ -325,13 +326,19 @@ class Beatmap {
 let team1 = "Red",
     team2 = "Blue";
 
-socket.onmessage = event => {
+socket.onmessage = async event => {
     if (!hasImported) return;
     let data = JSON.parse(event.data);
 
+    if (previousState != data.tourney.manager.ipcState) {
+        checkState(data.tourney.manager.ipcState);
+        scoreTracker.updateState(data.tourney.manager.ipcState);
+        previousState = data.tourney.manager.ipcState;
+    }
+
     if (data.tourney.manager.bools.scoreVisible) {
-        updateClients(data.tourney.ipcClients);
-        updateScore(data.tourney.manager.gameplay.score.left, data.tourney.manager.gameplay.score.right);
+        scoreTracker.updateClients(data.tourney.ipcClients);
+        await updateScore();
     }
 
     let file = data.menu.bm.path.file;
@@ -341,9 +348,7 @@ socket.onmessage = event => {
     }
 
     let beatmapID = data.menu.bm.id;
-    console.log(banCount);
     if (currentBeatmap != beatmapID) {
-        console.log("happened");
         currentBeatmap = beatmapID;
         banCount == 2 && autoPick ? updateDetails(beatmapID) : null;
     }
@@ -456,11 +461,6 @@ socket.onmessage = event => {
 			}
 		}
 	}
-
-    if (previousState != data.tourney.manager.ipcState) {
-        checkState(data.tourney.manager.ipcState);
-        previousState = data.tourney.manager.ipcState;
-    }
 }
 
 async function checkState(ipcState) {
@@ -829,17 +829,17 @@ async function updateBeatmapDetails(data) {
         customMappers = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)?.["mappers"].join(", ");
         let mod = pick.substring(0,2).toUpperCase();
         if (mod == "HR") {
-            memoryOD = Math.min(memoryOD*1.4, 10).toFixed(1);
-            memoryCS = Math.min(memoryCS*1.3, 10).toFixed(1);
-            memoryAR = Math.min(memoryAR*1.4, 10).toFixed(1);
-            fullSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"];
+            memoryOD = Math.min(memoryOD*1.4, 10);
+            memoryCS = Math.min(memoryCS*1.3, 10);
+            memoryAR = Math.min(memoryAR*1.4, 10);
+            // fullSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"];
         } else if (mod == "DT") {
             // thanks schdewz
-            memoryOD = Math.min((79.5 - (Math.min(79.5, Math.max(19.5, 79.5 - Math.ceil(6 * memoryOD))) / 1.5)) / 6, 1.5 > 1.5 ? 12 : 11).toFixed(1);
+            memoryOD = Math.min((79.5 - (Math.min(79.5, Math.max(19.5, 79.5 - Math.ceil(6 * memoryOD))) / 1.5)) / 6, 1.5 > 1.5 ? 12 : 11);
             let ar_ms = Math.max(Math.min(memoryAR <= 5 ? 1800 - 120 * memoryAR : 1200 - 150 * (memoryAR - 5), 1800), 450) / 1.5;
-            memoryAR = ar_ms > 1200 ? ((1800 - ar_ms) / 120).toFixed(2) : (5 + (1200 - ar_ms) / 150).toFixed(1);
+            memoryAR = ar_ms > 1200 ? ((1800 - ar_ms) / 120) : (5 + (1200 - ar_ms) / 150);
         
-            fullSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"];
+            // fullSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"];
         }
     } else {
         customMappers = "";
@@ -889,27 +889,16 @@ const ctrlClick = new MouseEvent("click", {
 
 async function setupClients() {
     const clientNumber = 6
-    console.log("client setup");
     for (let i=0;i<clientNumber;i++) {
         const client = new Client(i);
         client.generate();
-        clients.push(client);
+        scoreTracker.addClient(client, i<3?true:false);
     }
 }
 
-function updateClients(data) {
-    data.map(async(clientData,index) => {
-        const client = clients[index];
-        if (client) {
-            client.updateAccuracy(clientData.gameplay.accuracy);
-            client.updateScore(clientData.gameplay.score);
-            client.updateCombo(clientData.gameplay.combo.current);
-            client.updatePlayer(clientData.spectating.name);
-        }
-    })
-}
+async function updateScore() {
 
-async function updateScore(playScoreOne, playScoreTwo) {
+    let [playScoreOne, playScoreTwo] = scoreTracker.getScores();
     let difference = Math.abs(playScoreOne-playScoreTwo);
     animationScore.playerOneScore.update(playScoreOne);
     animationScore.playerTwoScore.update(playScoreTwo);
@@ -1086,5 +1075,46 @@ class Client {
         const element = document.getElementById(this.playerNameClient.id)
         element.innerHTML = name;
         this.player = name;
+    }
+}
+
+class ScoreTracker {
+    constructor() {
+        this.currentState = 0;
+        this.leftClients = [];
+        this.rightClients = [];
+    }
+    addClient(client,isLeft) {
+        if (isLeft) {
+            this.leftClients.push(client);
+        } else {
+            this.rightClients.push(client);
+        }
+    }
+    updateClients(data) {
+        data.map(async(clientData,index) => {
+            const client = index < 3 ? this.leftClients[index] : this.rightClients[index-3];
+            if (client) {
+                client.updateAccuracy(clientData.gameplay.accuracy);
+                client.updateScore(clientData.gameplay.mods.str.includes("EZ") ? Number(clientData.gameplay.score)*2 : clientData.gameplay.score);
+                client.updateCombo(clientData.gameplay.combo.current);
+                client.updatePlayer(clientData.spectating.name);
+            }
+        })
+    }
+    getScores() {
+        if (this.currentState != 3) return null,null;
+        let left = 0;
+        let right = 0;
+        this.leftClients.map(async(client) => {
+            left += client.score ?? 0;
+        })
+        this.rightClients.map(async(client) => {
+            right += client.score ?? 0;
+        })
+        return [left,right];
+    }
+    updateState(state) {
+        this.currentState = state;
     }
 }
