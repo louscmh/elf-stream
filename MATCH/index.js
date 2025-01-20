@@ -818,6 +818,7 @@ async function updateBeatmapDetails(data) {
     let { difficulty, mapper, artist, title } = data.menu.bm.metadata;
     let pick;
     let customMappers;
+    let finalSR = null;
 
     // if (data.menu.mods.str.includes("DT") || data.menu.mods.str.includes("NC")) {
     //     return;
@@ -832,14 +833,14 @@ async function updateBeatmapDetails(data) {
             memoryOD = Math.min(memoryOD*1.4, 10);
             memoryCS = Math.min(memoryCS*1.3, 10);
             memoryAR = Math.min(memoryAR*1.4, 10);
-            // fullSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"];
+            finalSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"] ?? fullSR;
         } else if (mod == "DT") {
             // thanks schdewz
             memoryOD = Math.min((79.5 - (Math.min(79.5, Math.max(19.5, 79.5 - Math.ceil(6 * memoryOD))) / 1.5)) / 6, 1.5 > 1.5 ? 12 : 11);
             let ar_ms = Math.max(Math.min(memoryAR <= 5 ? 1800 - 120 * memoryAR : 1200 - 150 * (memoryAR - 5), 1800), 450) / 1.5;
             memoryAR = ar_ms > 1200 ? ((1800 - ar_ms) / 120) : (5 + (1200 - ar_ms) / 150);
         
-            // fullSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"];
+            finalSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"] ?? fullSR;
         }
     } else {
         customMappers = "";
@@ -851,14 +852,14 @@ async function updateBeatmapDetails(data) {
     odElement.innerHTML = memoryOD.toFixed(1);
     arElement.innerHTML = memoryAR.toFixed(1);
     csElement.innerHTML = memoryCS.toFixed(1);
-    srElement.innerHTML = `${fullSR}*`;
+    srElement.innerHTML = `${finalSR ?? fullSR}*`;
     bpmElement.innerHTML = min === max ? min : `${min}-${max}`;
     lengthElement.innerHTML = parseTime(full);
 
     data.menu.bm.path.full = data.menu.bm.path.full.replace(/#/g,'%23').replace(/%/g,'%25');
     sourceElement.setAttribute('src',`http://` + location.host + `/Songs/${data.menu.bm.path.full}?a=${Math.random(10000)}`);
     sourceElement.onerror = function() {
-        sourceElement.setAttribute('src',`../_shared_assets/design/temporary_bg.png`);
+        sourceElement.setAttribute('src',`../_shared_assets/design/Forum Banner.png`);
     };
 
     makeScrollingText(beatmapNameElement,beatmapNameDelayElement, 20, 416, 20);
