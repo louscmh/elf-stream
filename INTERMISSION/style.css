@@ -275,6 +275,27 @@
     margin-top:-10px;
 }
 
+#sceneTransition {
+    font-family: "JosefinSans-Bold";
+    width: 1920px;
+    height: 1080px;
+    position: absolute;
+    top:0px;
+    left:0px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    z-index: 5 !important;
+}
+
+#transitionVideo {
+    width:1920px; 
+    height:1080px; 
+    object-fit: cover;
+    z-index: 5 !important;
+}
+
 @keyframes bobble {
     0% {
         transform: translateY(-10px);

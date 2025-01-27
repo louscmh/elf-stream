@@ -78,6 +78,7 @@ let turnButton = document.getElementById("turnButton");
 
 let resultTitle = document.getElementById("title");
 let main = document.getElementById("main");
+let stinger = document.getElementById("transitionVideo");
 
 // PLACEHOLDER VARS /////////////////////////////////////////////////////////////////
 let currentScene = "start"
@@ -107,17 +108,19 @@ hideButton.addEventListener("click", async function(event) {
         currentlyHidden = false;
         hideButton.style.backgroundColor = "rgb(131, 65, 65)";
         hideButton.innerHTML = "REVEAL MATCH";
+        // stinger.play();
         setTimeout(function() {
             main.style.opacity = 1;
-        }, 0);
+        }, 1000);
     }
     else {
         currentlyHidden = true;
         hideButton.style.backgroundColor = "rgb(139, 4, 4)";
         hideButton.innerHTML = "HIDE MATCH";
+        // stinger.play();
         setTimeout(function() {
             main.style.opacity = 0;
-        }, 0);
+        }, 1000);
     }
 })
 

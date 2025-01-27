@@ -13,11 +13,54 @@ socket.onerror = error => {
 
 window.addEventListener("contextmenu", (e) => e.preventDefault());
 
+// CLASS //////////////////////////////////////////////////////////////////////
+
+class ScoreTracker {
+    constructor() {
+        this.currentState = 0;
+        this.leftClients = [];
+        this.rightClients = [];
+    }
+    addClient(client,isLeft) {
+        if (isLeft) {
+            this.leftClients.push(client);
+        } else {
+            this.rightClients.push(client);
+        }
+    }
+    updateClients(data) {
+        data.map(async(clientData,index) => {
+            const client = index < 3 ? this.leftClients[index] : this.rightClients[index-3];
+            if (client) {
+                client.updateAccuracy(clientData.gameplay.accuracy);
+                client.updateScore(clientData.gameplay.mods.str.includes("EZ") ? Number(clientData.gameplay.score)*2 : clientData.gameplay.score);
+                client.updateCombo(clientData.gameplay.combo.current);
+                client.updatePlayer(clientData.spectating.name);
+            }
+        })
+    }
+    getScores() {
+        if (this.currentState != 3) return null,null;
+        let left = 0;
+        let right = 0;
+        this.leftClients.map(async(client) => {
+            left += client.score ?? 0;
+        })
+        this.rightClients.map(async(client) => {
+            right += client.score ?? 0;
+        })
+        return [left,right];
+    }
+    updateState(state) {
+        this.currentState = state;
+    }
+}
+
 // SHOWCASE DATES DATA /////////////////////////////////////////////////////////////////
 let dates = [];
 let teams = [];
 let hasImported = false;
-let scoreTracker;
+let scoreTracker = new ScoreTracker();
 (async () => {
     try {
         const jsonData = await $.getJSON("../_data/dates.json");
@@ -28,7 +71,6 @@ let scoreTracker;
         jsonData2.map((team) => {
             teams.push(team);
         });
-        scoreTracker = new ScoreTracker();
         hasImported = true;
     } catch (error) {
         console.error("Could not read JSON file", error);
@@ -87,10 +129,14 @@ let sceneBackground = document.getElementById("sceneBackground");
 let mappoolContainer = document.getElementById("mappoolContainer");
 let chatbox = document.getElementById("chatbox");
 let score = document.getElementById("scoreBoard");
+let leftTeamLineup = document.getElementById("leftTeamLineup");
+let rightTeamLineup = document.getElementById("rightTeamLineup");
+let teamLineupAsset = document.getElementById("teamLineup");
 
 
 // PLACEHOLDER VARS /////////////////////////////////////////////////////////////////
 let currentFile = "";
+let currentStats;
 let gameState;
 let currentStage;
 let bestOfTemp;
@@ -151,10 +197,12 @@ sceneButton.addEventListener("click", function(event) {
         sceneButton.style.backgroundColor = "rgb(128, 183, 255)";
         mappoolContainer.style.animation = "sceneChangeInRight 1.5s ease-in-out";
         chatbox.style.animation = "sceneChangeInLeft 1.5s ease-in-out";
+        teamLineupAsset.style.animation = "sceneChangeInLeft 1.5s ease-in-out";
         hasPick ? null : currentlyPicking.style.animation = "sceneChangeInLeft 1.5s ease-in-out";
         chatbox.style.opacity = 0;
         hasPick ? null : currentlyPicking.style.opacity = 0;
         mappoolContainer.style.opacity = 0;
+        teamLineupAsset.style.opacity = 0;
         setTimeout(function() {
             sceneBackground.style.clipPath = "polygon(0 0%, 0 0, 100% 0, 100% 100%, 0 100%, 0 100%, 100% 100%, 100% 0%)";
         }, 750);
@@ -164,8 +212,10 @@ sceneButton.addEventListener("click", function(event) {
         sceneButton.style.backgroundColor = "rgb(255, 128, 128)";
         mappoolContainer.style.animation = "sceneChangeOutRight 1.5s ease-in-out";
         chatbox.style.animation = "sceneChangeOutLeft 1.5s ease-in-out";
+        !hasPick ? null : teamLineupAsset.style.animation = "sceneChangeOutLeft 1.5s ease-in-out";
         sceneBackground.style.clipPath = "polygon(0 50%, 0 0, 100% 0, 100% 100%, 0 100%, 0 50%, 100% 50%, 100% 50%)";
         chatbox.style.opacity = 1;
+        !hasPick ? null : teamLineupAsset.style.opacity = 1;
         if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
             hasPick ? null : currentlyPicking.style.animation = "sceneChangeOutLeft 1.5s ease-in-out";
             hasPick ? null : currentlyPicking.style.opacity = 1;
@@ -179,13 +229,16 @@ turnButton.addEventListener("click", async function(event) {
     if (currentTurn == 0 && banCount == 2) {
         await stopPulse();
         currentTurn = 1;
-        currentScene == 1 ? null : currentPickTeam.innerHTML = `${currentTurn == 0 ? playerOne.innerHTML : playerTwo.innerHTML}`;
+        currentPickTeam.innerHTML = `${playerTwo.innerHTML}`;
         turnButton.innerHTML = "CURRENTLY PICKING: RIGHT TEAM";
         if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
             currentScene == 1 ? null : currentlyPicking.style.display = "initial";
             currentScene == 1 ? null : currentlyPicking.style.opacity = 1;
             currentScene == 1 ? null : currentlyPicking.style.transform = "translateX(0)";
             currentScene == 1 ? null : currentlyPicking.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+            currentScene == 1 ? teamLineupAsset.style.display = "none" : teamLineupAsset.style.animation = "slideOut 1s cubic-bezier(.45,0,1,.48)";
+            currentScene == 1 ? teamLineupAsset.style.opacity = 0 : teamLineupAsset.style.opacity = 0;
+            currentScene == 1 ? null : teamLineupAsset.style.transform = "translateX(-500px)";
         }
         turnButton.style.backgroundColor = "#08ac7dff";
         playerOnePick.style.opacity = "0";
@@ -194,13 +247,16 @@ turnButton.addEventListener("click", async function(event) {
     } else if (currentTurn == 1 && banCount == 2) {
         await stopPulse();
         currentTurn = 0;
-        currentScene == 1 ? null : currentPickTeam.innerHTML = `${currentTurn == 0 ? playerOne.innerHTML : playerTwo.innerHTML}`;
+        currentPickTeam.innerHTML = `${playerOne.innerHTML}`;
         turnButton.innerHTML = "CURRENTLY PICKING: LEFT TEAM";
         if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
             currentScene == 1 ? null : currentlyPicking.style.display = "initial";
             currentScene == 1 ? null : currentlyPicking.style.opacity = 1;
             currentScene == 1 ? null : currentlyPicking.style.transform = "translateX(0)";
             currentScene == 1 ? null : currentlyPicking.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+            currentScene == 1 ? teamLineupAsset.style.display = "none" : teamLineupAsset.style.animation = "slideOut 1s cubic-bezier(.45,0,1,.48)";
+            currentScene == 1 ? teamLineupAsset.style.opacity = 0 : teamLineupAsset.style.opacity = 0;
+            currentScene == 1 ? null : teamLineupAsset.style.transform = "translateX(-500px)";
         }
         turnButton.style.backgroundColor = "#6c9e07ff";
         playerOnePick.style.opacity = "0";
@@ -336,14 +392,16 @@ socket.onmessage = async event => {
         previousState = data.tourney.manager.ipcState;
     }
 
-    if (data.tourney.manager.bools.scoreVisible) {
+    if (data.tourney.manager.bools.scoreVisible && data.tourney.manager.ipcState == 3) {
         scoreTracker.updateClients(data.tourney.ipcClients);
         await updateScore();
     }
 
     let file = data.menu.bm.path.file;
-    if (currentFile != file) {
+    let stats = data.menu.bm.stats;
+    if (currentFile != file || currentStats != stats) {
         currentFile = file;
+        currentStats = stats;
         updateBeatmapDetails(data);
     }
 
@@ -363,6 +421,8 @@ socket.onmessage = async event => {
     if (tempLeft != playerOne.innerHTML) {
         setTimeout(function(event) {
             playerOne.innerHTML = tempLeft;
+            currentStage = getCurrentStage()
+            stageText.innerHTML = currentStage;
             leftPlayerOne.innerHTML = teams.find(team => team["teamName"] === tempLeft)?.["teamMembers"].join(", ");
             leftTeam = tempLeft;
         }, 150);
@@ -375,15 +435,12 @@ socket.onmessage = async event => {
         }, 150);
     }
 
-    if (currentStage != getCurrentStage()) {
-        currentStage = getCurrentStage()
-        stageText.innerHTML = currentStage;
-    }
-
     if (!hasSetup) {
         setupBeatmaps();
         setupClients();
     }
+
+    updateTeamLineups(data.tourney.ipcClients);
 
     if (chatLen != data.tourney.manager.chat.length) {
         updateChat(data);
@@ -556,7 +613,7 @@ async function setupBeatmaps() {
                     bm.ban.innerHTML = ``;
                 }, 500);
             } else {
-                if (!bm.isBan) {
+                if (banCount == 2) {
                     if (bm.mods == "TB") {
                         await stopPulse();
                         bm.overlay.style.zIndex = 1;
@@ -583,6 +640,10 @@ async function setupBeatmaps() {
                         currentlyPicking.style.transform = "translateX(-500px)";
                         currentlyPicking.style.opacity = 0;
                         currentlyPicking.style.animation = "slideOut 1s cubic-bezier(.45,0,1,.48)";
+                        teamLineupAsset.style.opacity = 1;
+                        teamLineupAsset.style.transform = "translateX(0)";
+                        teamLineupAsset.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+                        teamLineupAsset.style.display = "initial";
                         hasPick = true;
                     }
                 }
@@ -627,7 +688,7 @@ async function setupBeatmaps() {
                     bm.ban.innerHTML = ``;
                 }, 500);
             } else {
-                if (!bm.isBan) {
+                if (banCount == 2) {
                     if (bm.mods == "TB") {
                         await stopPulse();
                         bm.overlay.style.zIndex = 1;
@@ -654,6 +715,10 @@ async function setupBeatmaps() {
                         currentlyPicking.style.transform = "translateX(-500px)";
                         currentlyPicking.style.opacity = 0;
                         currentlyPicking.style.animation = "slideOut 1s cubic-bezier(.45,0,1,.48)";
+                        teamLineupAsset.style.opacity = 1;
+                        teamLineupAsset.style.transform = "translateX(0)";
+                        teamLineupAsset.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+                        teamLineupAsset.style.display = "initial";
                         hasPick = true;
                     }
                 }
@@ -708,16 +773,20 @@ function getCurrentStage() {
     // console.log(`${day}, ${month}`);
 
     let currentStage;
+    let selectedStage = "No Stage Detected";
 
     for (let stage of dates) {
         stageDate = parseDateTime(stage["date"]);
-        // console.log(`${stageDate.getUTCDate()}, ${stageDate.getUTCMonth()}`);
-        if (stageDate.getUTCDate() >= day && stageDate.getUTCMonth()+1 >= month) {
-            return stage["stage"];
+        // console.log(`${day}, ${month}`);
+        // console.log(`${stageDate.getUTCDate()}, ${stageDate.getUTCMonth()+1}`);
+        // console.log(stageDate.getUTCDate() <= day);
+        // console.log(stageDate.getUTCMonth()+1 <= month);
+        if (stageDate.getUTCDate() <= day && stageDate.getUTCMonth()+1 <= month) {
+            selectedStage = stage["stage"];
         }
         currentStage = stage;
     }
-    return "No Stage Detected";
+    return selectedStage;
 }
 
 function parseDateTime(dateTimeString) {
@@ -833,26 +902,26 @@ async function updateBeatmapDetails(data) {
             memoryOD = Math.min(memoryOD*1.4, 10);
             memoryCS = Math.min(memoryCS*1.3, 10);
             memoryAR = Math.min(memoryAR*1.4, 10);
-            finalSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"] ?? fullSR;
+            fullSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"] ?? fullSR;
         } else if (mod == "DT") {
             // thanks schdewz
             memoryOD = Math.min((79.5 - (Math.min(79.5, Math.max(19.5, 79.5 - Math.ceil(6 * memoryOD))) / 1.5)) / 6, 1.5 > 1.5 ? 12 : 11);
             let ar_ms = Math.max(Math.min(memoryAR <= 5 ? 1800 - 120 * memoryAR : 1200 - 150 * (memoryAR - 5), 1800), 450) / 1.5;
             memoryAR = ar_ms > 1200 ? ((1800 - ar_ms) / 120) : (5 + (1200 - ar_ms) / 150);
         
-            finalSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"] ?? fullSR;
+            fullSR = beatmapSet.find(beatmap => beatmap["beatmapId"] === id)["modSR"] ?? fullSR;
         }
     } else {
         customMappers = "";
     }
-    pickElement.innerHTML = pick == null ? "XX1" : pick;
+    pickElement.innerHTML = pick == null ? "N.A" : pick;
 
     beatmapNameElement.innerHTML = `${artist} - ${title} [${difficulty}]`;
     beatmapMapperElement.innerHTML = customMappers != "" ? `Beatmap by ${customMappers}`:`Beatmap by ${mapper}`;
     odElement.innerHTML = memoryOD.toFixed(1);
     arElement.innerHTML = memoryAR.toFixed(1);
     csElement.innerHTML = memoryCS.toFixed(1);
-    srElement.innerHTML = `${finalSR ?? fullSR}*`;
+    srElement.innerHTML = `${Number(fullSR).toFixed(2)}*`;
     bpmElement.innerHTML = min === max ? min : `${min}-${max}`;
     lengthElement.innerHTML = parseTime(full);
 
@@ -1079,43 +1148,25 @@ class Client {
     }
 }
 
-class ScoreTracker {
-    constructor() {
-        this.currentState = 0;
-        this.leftClients = [];
-        this.rightClients = [];
-    }
-    addClient(client,isLeft) {
-        if (isLeft) {
-            this.leftClients.push(client);
-        } else {
-            this.rightClients.push(client);
+function updateTeamLineups(clients) {
+    let leftTeam = `${playerOne.innerHTML}: `;
+    let left = 0;
+    let rightTeam = `${playerTwo.innerHTML}: `;
+    let right = 0;
+    let leftTeamPlayers = teams.find(team => team["teamName"] === playerOne.innerHTML)?.["teamMembers"];
+    let rightTeamPlayers = teams.find(team => team["teamName"] === playerTwo.innerHTML)?.["teamMembers"];
+    // console.log(leftTeamPlayers);
+    clients.map((client) => {
+        if (leftTeamPlayers.includes(client.spectating.name)) {
+            leftTeam += (left > 0 ? `, ` : ``) + `${client.spectating.name}`;
+            left ++;
+        } else if (rightTeamPlayers.includes(client.spectating.name)) {
+            rightTeam += (right > 0 ? `, ` : ``) + `${client.spectating.name}`;
+            right ++;
         }
-    }
-    updateClients(data) {
-        data.map(async(clientData,index) => {
-            const client = index < 3 ? this.leftClients[index] : this.rightClients[index-3];
-            if (client) {
-                client.updateAccuracy(clientData.gameplay.accuracy);
-                client.updateScore(clientData.gameplay.mods.str.includes("EZ") ? Number(clientData.gameplay.score)*2 : clientData.gameplay.score);
-                client.updateCombo(clientData.gameplay.combo.current);
-                client.updatePlayer(clientData.spectating.name);
-            }
-        })
-    }
-    getScores() {
-        if (this.currentState != 3) return null,null;
-        let left = 0;
-        let right = 0;
-        this.leftClients.map(async(client) => {
-            left += client.score ?? 0;
-        })
-        this.rightClients.map(async(client) => {
-            right += client.score ?? 0;
-        })
-        return [left,right];
-    }
-    updateState(state) {
-        this.currentState = state;
-    }
+    })
+
+    leftTeamLineup.innerHTML = leftTeam;
+    rightTeamLineup.innerHTML = rightTeam;
+
 }
