@@ -77,7 +77,6 @@ let turnButton = document.getElementById("turnButton");
 
 let resultTitle = document.getElementById("title");
 let main = document.getElementById("main");
-let stinger = document.getElementById("transitionVideo");
 
 // PLACEHOLDER VARS /////////////////////////////////////////////////////////////////
 let currentScene = "start"
