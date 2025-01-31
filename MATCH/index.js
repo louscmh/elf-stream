@@ -155,6 +155,7 @@ let leftTeam;
 let rightTeam;
 let leftTeamStars;
 let rightTeamStars;
+let isTB = false;
 const beatmaps = new Set(); // Store beatmapID;
 const bms = []; // Store beatmaps
 
@@ -217,9 +218,9 @@ sceneButton.addEventListener("click", function(event) {
         chatbox.style.opacity = 1;
         !hasPick ? null : teamLineupAsset.style.opacity = 1;
         if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
-            hasPick ? null : currentlyPicking.style.animation = "sceneChangeOutLeft 1.5s ease-in-out";
-            hasPick ? null : currentlyPicking.style.opacity = 1;
-            hasPick ? null : currentlyPicking.style.transform = "translateX(0)";
+            hasPick ? null : isTB ? null : currentlyPicking.style.animation = "sceneChangeOutLeft 1.5s ease-in-out";
+            hasPick ? null : isTB ? null : currentlyPicking.style.opacity = 1;
+            hasPick ? null : isTB ? null : currentlyPicking.style.transform = "translateX(0)";
         }
         mappoolContainer.style.opacity = 1;
     }
@@ -232,10 +233,10 @@ turnButton.addEventListener("click", async function(event) {
         currentPickTeam.innerHTML = `${playerTwo.innerHTML}`;
         turnButton.innerHTML = "ピック順番: 右チーム";
         if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
-            currentScene == 1 ? null : currentlyPicking.style.display = "initial";
-            currentScene == 1 ? null : currentlyPicking.style.opacity = 1;
-            currentScene == 1 ? null : currentlyPicking.style.transform = "translateX(0)";
-            currentScene == 1 ? null : currentlyPicking.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+            currentScene == 1 ? null : isTB ? null : currentlyPicking.style.display = "initial";
+            currentScene == 1 ? null : isTB ? null : currentlyPicking.style.opacity = 1;
+            currentScene == 1 ? null : isTB ? null : currentlyPicking.style.transform = "translateX(0)";
+            currentScene == 1 ? null : isTB ? null : currentlyPicking.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
             currentScene == 1 ? teamLineupAsset.style.display = "none" : teamLineupAsset.style.animation = "slideOut 1s cubic-bezier(.45,0,1,.48)";
             currentScene == 1 ? teamLineupAsset.style.opacity = 0 : teamLineupAsset.style.opacity = 0;
             currentScene == 1 ? null : teamLineupAsset.style.transform = "translateX(-500px)";
@@ -250,10 +251,10 @@ turnButton.addEventListener("click", async function(event) {
         currentPickTeam.innerHTML = `${playerOne.innerHTML}`;
         turnButton.innerHTML = "ピック順番: 左チーム";
         if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
-            currentScene == 1 ? null : currentlyPicking.style.display = "initial";
-            currentScene == 1 ? null : currentlyPicking.style.opacity = 1;
-            currentScene == 1 ? null : currentlyPicking.style.transform = "translateX(0)";
-            currentScene == 1 ? null : currentlyPicking.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+            currentScene == 1 ? null : isTB ? null : currentlyPicking.style.display = "initial";
+            currentScene == 1 ? null : isTB ? null : currentlyPicking.style.opacity = 1;
+            currentScene == 1 ? null : isTB ? null : currentlyPicking.style.transform = "translateX(0)";
+            currentScene == 1 ? null : isTB ? null : currentlyPicking.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
             currentScene == 1 ? teamLineupAsset.style.display = "none" : teamLineupAsset.style.animation = "slideOut 1s cubic-bezier(.45,0,1,.48)";
             currentScene == 1 ? teamLineupAsset.style.opacity = 0 : teamLineupAsset.style.opacity = 0;
             currentScene == 1 ? null : teamLineupAsset.style.transform = "translateX(-500px)";
@@ -263,7 +264,7 @@ turnButton.addEventListener("click", async function(event) {
         playerTwoPick.style.opacity = "0";
         turnButton.style.color = "white";
     } else {
-        turnButton.innerHTML = "順番不可能: 二つBeatmapをバンしてください";
+        turnButton.innerHTML = "利用不可能: 二つBeatmapをバンしてください";
         turnButton.style.backgroundColor = "rgb(36, 49, 33)";
         turnButton.style.color = "rgba(255, 255, 255, 0.473)";
         currentlyPicking.style.transform = "translateX(-500px)";
@@ -453,8 +454,11 @@ socket.onmessage = async event => {
         leftTeamStars = data.tourney.manager.stars.left;
         rightTeamStars = data.tourney.manager.stars.right
 
-        if ((bestOfTemp-data.tourney.manager.stars.left) == 1 && (bestOfTemp-data.tourney.manager.stars.right) == 1) {
-            currentlyPicking.style.opacity = 0;
+        if (((bestOfTemp-data.tourney.manager.stars.left) == 1 && (bestOfTemp-data.tourney.manager.stars.right) == 1) || (bestOfTemp-data.tourney.manager.stars.left) == 0 || (bestOfTemp-data.tourney.manager.stars.right) == 0) {
+            currentlyPicking.style.display = "none";
+            isTB = true;
+        } else {
+            isTB = false;
         }
 
 		// To know where to blow or pop score
@@ -621,6 +625,13 @@ async function setupBeatmaps() {
                         bm.pickIcon.style.opacity = "1";
                         bm.highlight.style.opacity = "1";
                         bm.clicker.style.animation = "pick 2s infinite cubic-bezier(.61,.01,.45,1)";
+                        currentlyPicking.style.transform = "translateX(-500px)";
+                        currentlyPicking.style.opacity = 0;
+                        currentlyPicking.style.animation = "slideOut 1s cubic-bezier(.45,0,1,.48)";
+                        teamLineupAsset.style.opacity = 1;
+                        teamLineupAsset.style.transform = "translateX(0)";
+                        teamLineupAsset.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+                        teamLineupAsset.style.display = "initial";
                         hasPick = true;
                     } else {
                         await stopPulse();
@@ -696,6 +707,13 @@ async function setupBeatmaps() {
                         bm.pickIcon.style.opacity = "1";
                         bm.highlight.style.opacity = "1";
                         bm.clicker.style.animation = "pick 2s infinite cubic-bezier(.61,.01,.45,1)";
+                        currentlyPicking.style.transform = "translateX(-500px)";
+                        currentlyPicking.style.opacity = 0;
+                        currentlyPicking.style.animation = "slideOut 1s cubic-bezier(.45,0,1,.48)";
+                        teamLineupAsset.style.opacity = 1;
+                        teamLineupAsset.style.transform = "translateX(0)";
+                        teamLineupAsset.style.animation = "slideIn 1s cubic-bezier(0,.55,.34,.99)";
+                        teamLineupAsset.style.display = "initial";
                         hasPick = true;
                     } else {
                         await stopPulse();

@@ -73,7 +73,6 @@ let rightTeamMembers = document.getElementById("rightTeamMembers");
 let vs = document.getElementById("vs");
 
 let sceneButton = document.getElementById("sceneButton");
-let hideButton = document.getElementById("hideButton");
 let turnButton = document.getElementById("turnButton");
 
 let resultTitle = document.getElementById("title");
@@ -94,33 +93,12 @@ sceneButton.addEventListener("click", async function(event) {
     if (currentScene == "start") {
         await promptResult();
         sceneButton.style.backgroundColor = "rgb(4, 107, 139)";
-        sceneButton.innerHTML = "CURRENT SCENE: RESULTS";
+        sceneButton.innerHTML = "現シーン: RESULTS";
     }
     else {
         await promptStart();
         sceneButton.style.backgroundColor = "rgb(27, 139, 4)";
-        sceneButton.innerHTML = "CURRENT SCENE: STARTING";
-    }
-})
-
-hideButton.addEventListener("click", async function(event) {
-    if (currentlyHidden) {
-        currentlyHidden = false;
-        hideButton.style.backgroundColor = "rgb(131, 65, 65)";
-        hideButton.innerHTML = "REVEAL MATCH";
-        // stinger.play();
-        setTimeout(function() {
-            main.style.opacity = 1;
-        }, 1000);
-    }
-    else {
-        currentlyHidden = true;
-        hideButton.style.backgroundColor = "rgb(139, 4, 4)";
-        hideButton.innerHTML = "HIDE MATCH";
-        // stinger.play();
-        setTimeout(function() {
-            main.style.opacity = 0;
-        }, 1000);
+        sceneButton.innerHTML = "現シーン: STARTING";
     }
 })
 
@@ -134,11 +112,11 @@ socket.onmessage = event => {
     tempRight = data.tourney.manager.teamName.right;
 
     if (tempLeft != "" && tempRight != "") {
-        turnButton.innerHTML = `CURRENT MATCH: ${tempLeft} VS ${tempRight}`
+        turnButton.innerHTML = `現試合: ${tempLeft} VS ${tempRight}`
         turnButton.style.backgroundColor = "rgb(107, 77, 48)";
         turnButton.style.color = "white";
     } else {
-        turnButton.innerHTML = `CURRENT MATCH: N.A`
+        turnButton.innerHTML = `現試合: N.A`
         turnButton.style.backgroundColor = "rgb(49, 41, 33)";
         turnButton.style.color = "rgba(255, 255, 255, 0.473)";
     }
