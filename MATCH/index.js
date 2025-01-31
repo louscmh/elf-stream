@@ -193,7 +193,7 @@ const mods = {
 sceneButton.addEventListener("click", function(event) {
     if (currentScene == 0) {
         currentScene = 1;
-        sceneButton.innerHTML = "CURRENT SCENE: GAMEPLAY";
+        sceneButton.innerHTML = "現シーン: GAMEPLAY";
         sceneButton.style.backgroundColor = "rgb(128, 183, 255)";
         mappoolContainer.style.animation = "sceneChangeInRight 1.5s ease-in-out";
         chatbox.style.animation = "sceneChangeInLeft 1.5s ease-in-out";
@@ -208,7 +208,7 @@ sceneButton.addEventListener("click", function(event) {
         }, 750);
     } else {
         currentScene = 0;
-        sceneButton.innerHTML = "CURRENT SCENE: MAPPOOL";
+        sceneButton.innerHTML = "現シーン: MAPPOOL";
         sceneButton.style.backgroundColor = "rgb(255, 128, 128)";
         mappoolContainer.style.animation = "sceneChangeOutRight 1.5s ease-in-out";
         chatbox.style.animation = "sceneChangeOutLeft 1.5s ease-in-out";
@@ -230,7 +230,7 @@ turnButton.addEventListener("click", async function(event) {
         await stopPulse();
         currentTurn = 1;
         currentPickTeam.innerHTML = `${playerTwo.innerHTML}`;
-        turnButton.innerHTML = "CURRENTLY PICKING: RIGHT TEAM";
+        turnButton.innerHTML = "ピック順番: 右チーム";
         if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
             currentScene == 1 ? null : currentlyPicking.style.display = "initial";
             currentScene == 1 ? null : currentlyPicking.style.opacity = 1;
@@ -248,7 +248,7 @@ turnButton.addEventListener("click", async function(event) {
         await stopPulse();
         currentTurn = 0;
         currentPickTeam.innerHTML = `${playerOne.innerHTML}`;
-        turnButton.innerHTML = "CURRENTLY PICKING: LEFT TEAM";
+        turnButton.innerHTML = "ピック順番: 左チーム";
         if ((bestOfTemp-leftTeamStars) != 1 || (bestOfTemp-rightTeamStars) != 1) {
             currentScene == 1 ? null : currentlyPicking.style.display = "initial";
             currentScene == 1 ? null : currentlyPicking.style.opacity = 1;
@@ -263,7 +263,7 @@ turnButton.addEventListener("click", async function(event) {
         playerTwoPick.style.opacity = "0";
         turnButton.style.color = "white";
     } else {
-        turnButton.innerHTML = "TURN NOT AVAILABLE: BAN 2 MAPS FIRST";
+        turnButton.innerHTML = "順番不可能: 二つBeatmapをバンしてください";
         turnButton.style.backgroundColor = "rgb(36, 49, 33)";
         turnButton.style.color = "rgba(255, 255, 255, 0.473)";
         currentlyPicking.style.transform = "translateX(-500px)";
@@ -275,12 +275,12 @@ turnButton.addEventListener("click", async function(event) {
 autoButton.addEventListener("click", function(event) {
     if (autoPick == 0) {
         autoPick = 1;
-        autoButton.innerHTML = "AUTO PICK: ON";
+        autoButton.innerHTML = "自動ピック: ON";
         // #007A14
         autoButton.style.backgroundColor = "#00CA22";
     } else {
         autoPick = 0;
-        autoButton.innerHTML = "AUTO PICK: OFF";
+        autoButton.innerHTML = "自動ピック: OFF";
         autoButton.style.backgroundColor = "#007A14";
     }
 })
@@ -725,10 +725,11 @@ async function setupBeatmaps() {
             }
         });
         const mapData = await getDataSet(beatmap.beatmapId);
+        const customMappers = beatmapSet.find(beatmap => beatmap["beatmapId"] == mapData.beatmap_id)?.["mappers"].join(", ");
         bm.bg.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://assets.ppy.sh/beatmaps/${mapData.beatmapset_id}/covers/cover.jpg')`;
         bm.title.innerHTML = mapData.artist + ' - ' + mapData.title;
         makeScrollingText(bm.title, bm.titleDelay, 20, 270, 20);
-        bm.difficulty.innerHTML = `[${mapData.version}]` + '&emsp;&emsp;Mapper: ' + mapData.creator;
+        bm.difficulty.innerHTML = `[${mapData.version}]` + '&emsp;&emsp;Mapper: ' + (customMappers != "" ? customMappers:mapData.creator);
         makeScrollingText(bm.difficulty, bm.difficultyDelay, 30, 270, 20);
         beatmaps.add(bm);
     });

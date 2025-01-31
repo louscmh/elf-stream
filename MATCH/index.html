@@ -39,15 +39,15 @@
             <div class="statTitle">SR</div>
             <div id="sr" class="statText">00.00*</div>
           </div>
-          <div id="odRow" class="statRow">
-            <div class="statTitle">OD</div>
-            <div id="od" class="statText">00.0</div>
-          </div>
-        </div>
-        <div id="stats_2" class="statColumn">
           <div id="csRow" class="statRow">
             <div class="statTitle">CS</div>
             <div id="cs" class="statText">00.0</div>
+          </div>
+        </div>
+        <div id="stats_2" class="statColumn">
+          <div id="bpmRow" class="statRow">
+            <div class="statTitle">BPM</div>
+            <div id="bpm" class="statText">000 - 000</div>
           </div>
           <div id="arRow" class="statRow">
             <div class="statTitle">AR</div>
@@ -55,13 +55,13 @@
           </div>
         </div>
         <div id="stats_3" class="statColumn">
-          <div id="bpmRow" class="statRow">
-            <div class="statTitle">BPM</div>
-            <div id="bpm" class="statText">000 - 000</div>
-          </div>
           <div id="lengthRow" class="statRow">
             <div class="statTitle">LENGTH</div>
             <div id="length" class="statText">00:00</div>
+          </div>
+          <div id="odRow" class="statRow">
+            <div class="statTitle">OD</div>
+            <div id="od" class="statText">00.0</div>
           </div>
         </div>
       </div>
@@ -122,8 +122,8 @@
     </div>
     <div id="teamLineup">
       <div id="lineupText">Team Lineup</div>
-      <div id="leftTeamLineup">Left Team: adsasdasd</div>
-      <div id="rightTeamLineup">Right Team: adsasdasd</div>
+      <div id="leftTeamLineup">Left Team:</div>
+      <div id="rightTeamLineup">Right Team:</div>
     </div>
     <div id="stageText"></div>
     <div id="gameplayScreen">
@@ -182,17 +182,17 @@
     <img src="../_shared_assets/design/bg_clip.png" id="gameplayBackground">
   </div>
   <div id="controlPanel">
-    <div id="sceneButton">CURRENT SCENE: MAPPOOL</div>
-    <div id="turnButton">TURN NOT AVAILABLE: BAN 2 MAPS FIRST</div>
-    <div id="autoButton">AUTO PICK: OFF</div>
+    <div id="sceneButton">現シーン: MAPPOOL</div>
+    <div id="turnButton">順番不可能: 二つBeatmapをバンしてください</div>
+    <div id="autoButton">自動ピック: OFF</div>
     <div id="teamsControl">
       <div id="teamOneName">
-        <div id="teamPlayerText">LEFT TEAM PLAYERS</div>
-        <div id="leftPlayerOne">Player 1</div>
+        <div id="teamPlayerText">左チームメンバー</div>
+        <div id="leftPlayerOne"></div>
       </div>
       <div id="teamTwoName">
-        <div id="teamPlayerText">RIGHT TEAM PLAYERS</div>
-        <div id="rightPlayerOne">Player 1</div>
+        <div id="teamPlayerText">右チームメンバー</div>
+        <div id="rightPlayerOne"></div>
       </div>
     </div>
   </div>

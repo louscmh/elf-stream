@@ -232,6 +232,7 @@
 
 #leftName, #rightName {
     font-size: 42px;;
+    font-family: 'LINESeed-Bold';
 }
 
 #mappoolContainer {
@@ -470,7 +471,7 @@
 	overflow: hidden;
 }
 .unknown {
-	color: rgb(251, 255, 0);
+	color: rgb(153, 0, 255);
 }
 .bot {
 	color: #FF66AA;
@@ -504,7 +505,7 @@
 
 #currentPickTeam {
     font-size: 50px;
-    font-family: 'LINESeed-Regular', 'Poppins-Bold', 'sans-serif';
+    font-family: 'LINESeed-Bold', 'Poppins-Bold', 'sans-serif';
     margin-top:-5px;
     text-align: center;
 }
@@ -535,7 +536,7 @@
 
 #leftTeamLineup, #rightTeamLineup {
     font-size: 18px;
-    font-family: 'LINESeed-Regular', 'Poppins-Bold', 'sans-serif';
+    font-family: 'LINESeed-Bold', 'Poppins-Bold', 'sans-serif';
     text-align: center;
     width:400px;
 }
