@@ -1,5 +1,5 @@
 // SOCKET /////////////////////////////////////////////////////////////////
-let socket = new ReconnectingWebSocket("ws://" + location.host + "/ws");
+let socket = new ReconnectingWebSocket("ws://localhost:24050/ws");
 socket.onopen = () => {
     console.log("Successfully Connected");
 };
@@ -12,6 +12,9 @@ socket.onerror = error => {
 };
 
 window.addEventListener("contextmenu", (e) => e.preventDefault());
+
+// API /////////////////////////////////////////////////////////////////
+const BASE = "https://lous-gts-proxy.louscmh.workers.dev";
 
 // CLASS //////////////////////////////////////////////////////////////////////
 
@@ -72,26 +75,12 @@ let scoreTracker = new ScoreTracker();
             teams.push(team);
         });
         hasImported = true;
+        console.log("Data loaded, executing other code...");
     } catch (error) {
         console.error("Could not read JSON file", error);
     }
 })();
 console.log(dates);
-
-// API /////////////////////////////////////////////////////////////////
-const file = [];
-let api;
-(async () => {
-    try {
-        const jsonData = await $.getJSON("../_data/api.json");
-        jsonData.map((num) => {
-            file.push(num);
-        });
-        api = file[0].api;
-    } catch (error) {
-        console.error("Could not read JSON file", error);
-    }
-})();
 
 // HTML VARS /////////////////////////////////////////////////////////////////
 let playerOne = document.getElementById("leftName");
@@ -174,6 +163,8 @@ let beatmapIDS = [];
         jsonData.map((beatmap) => {
             beatmapSet.push(beatmap);
         });
+        console.log("Beatmap data loaded");
+        console.log(beatmapSet);
     } catch (error) {
         console.error("Could not read JSON file", error);
     }
@@ -183,11 +174,12 @@ let beatmapIDS = [];
 })();
 
 const mods = {
-    FM: 0,
+    NM: 0,
     HD: 1,
     HR: 2,
     DT: 3,
-    TB: 4,
+    FM: 4,
+    TB: 5,
 };
 
 // CONTROL PANELS //////////
@@ -227,7 +219,7 @@ sceneButton.addEventListener("click", function(event) {
 })
 
 turnButton.addEventListener("click", async function(event) {
-    if (currentTurn == 0 && banCount == 2) {
+    if (currentTurn == 0 && banCount == 4) {
         await stopPulse();
         currentTurn = 1;
         currentPickTeam.innerHTML = `${playerTwo.innerHTML}`;
@@ -245,7 +237,7 @@ turnButton.addEventListener("click", async function(event) {
         playerOnePick.style.opacity = "0";
         playerTwoPick.style.opacity = "0";
         turnButton.style.color = "white";
-    } else if (currentTurn == 1 && banCount == 2) {
+    } else if (currentTurn == 1 && banCount == 4) {
         await stopPulse();
         currentTurn = 0;
         currentPickTeam.innerHTML = `${playerOne.innerHTML}`;
@@ -409,7 +401,7 @@ socket.onmessage = async event => {
     let beatmapID = data.menu.bm.id;
     if (currentBeatmap != beatmapID) {
         currentBeatmap = beatmapID;
-        banCount == 2 && autoPick ? updateDetails(beatmapID) : null;
+        banCount == 4 && autoPick ? updateDetails(beatmapID) : null;
     }
 
     tempLeft = data.tourney.manager.teamName.left;
@@ -580,13 +572,13 @@ async function setupBeatmaps() {
         bm.generate();
         bm.clicker.addEventListener("click", async function(event) {
             if (event.shiftKey) {
-                if (banCount < 2) {
+                if (banCount < 4) {
                     await stopPulse();
                     bm.overlay.style.zIndex = 3;
                     bm.overlay.style.backgroundColor = "rgba(52, 71, 55, 0.8)";
                     bm.isBan == true ? null : banCount++;
                     bm.isBan == true ? null : bm.isBan = true;
-                    banCount == 2 ? currentTurn = 0 : null;
+                    banCount == 4 ? currentTurn = 0 : null;
                     turnButton.click();
                     bm.ban.style.opacity = "1";
                     bm.ban.style.color = `#E0E0C1`;
@@ -609,7 +601,7 @@ async function setupBeatmaps() {
                 bm.ban.style.opacity = "0";
                 bm.ban.style.color = `white`;
                 bm.isBan ? banCount-- : null;
-                banCount < 2 ? turnButton.click() : null;
+                banCount < 4 ? turnButton.click() : null;
                 bm.isBan = false;
                 playerOnePick.style.opacity = "0";
                 playerTwoPick.style.opacity = "0";
@@ -617,7 +609,7 @@ async function setupBeatmaps() {
                     bm.ban.innerHTML = ``;
                 }, 500);
             } else {
-                if (banCount == 2) {
+                if (banCount == 4) {
                     if (bm.mods == "TB") {
                         await stopPulse();
                         bm.overlay.style.zIndex = 1;
@@ -662,13 +654,13 @@ async function setupBeatmaps() {
         });
         bm.clicker.addEventListener("contextmenu", async function(event) {
             if (event.shiftKey) {
-                if (banCount < 2) {
+                if (banCount < 4) {
                     await stopPulse();
                     bm.overlay.style.zIndex = 3;
                     bm.overlay.style.backgroundColor = "rgba(52, 71, 55, 0.8)";
                     bm.isBan == true ? null : banCount++;
                     bm.isBan == true ? null : bm.isBan = true;
-                    banCount == 2 ? currentTurn = 1 : null;
+                    banCount == 4 ? currentTurn = 1 : null;
                     turnButton.click();
                     bm.ban.style.opacity = "1";
                     bm.ban.style.color = `#C1E0CC`;
@@ -691,7 +683,7 @@ async function setupBeatmaps() {
                 bm.ban.style.opacity = "0";
                 bm.ban.style.color = `white`;
                 bm.isBan ? banCount-- : null;
-                banCount < 2 ? turnButton.click() : null;
+                banCount < 4 ? turnButton.click() : null;
                 bm.isBan = false;
                 playerOnePick.style.opacity = "0";
                 playerTwoPick.style.opacity = "0";
@@ -699,7 +691,7 @@ async function setupBeatmaps() {
                     bm.ban.innerHTML = ``;
                 }, 500);
             } else {
-                if (banCount == 2) {
+                if (banCount == 4) {
                     if (bm.mods == "TB") {
                         await stopPulse();
                         bm.overlay.style.zIndex = 1;
@@ -762,21 +754,20 @@ async function stopPulse() {
 }
 
 async function getDataSet(beatmapID) {
-    try {
-        const data = (
-            await axios.get("/get_beatmaps", {
-                baseURL: "https://osu.ppy.sh/api",
-                params: {
-                    k: api,
-                    b: beatmapID,
-                },
-            })
-        )["data"];
-        return data.length !== 0 ? data[0] : null;
-    } catch (error) {
-        console.error(error);
-    }
+    const { data } = await axios.get("/get_beatmaps", {
+        baseURL: BASE,
+        params: { b: beatmapID }
+    });
+    return data.length ? data[0] : null;
 };
+
+async function getUserDataSet(user_id) {
+    const { data } = await axios.get("/get_user", {
+        baseURL: BASE,
+        params: { u: user_id, m: 0 }
+    });
+    return data.length ? data[0] : null;
+}
 
 const parseTime = ms => {
 	const second = Math.floor(ms / 1000) % 60 + '';
@@ -945,7 +936,7 @@ async function updateBeatmapDetails(data) {
     lengthElement.innerHTML = parseTime(full);
 
     data.menu.bm.path.full = data.menu.bm.path.full.replace(/#/g,'%23').replace(/%/g,'%25');
-    sourceElement.setAttribute('src',`http://` + location.host + `/Songs/${data.menu.bm.path.full}?a=${Math.random(10000)}`);
+    sourceElement.setAttribute('src',`http://127.0.0.1:24050/Songs/${data.menu.bm.path.full}?a=${Math.random(10000)}`);
     sourceElement.onerror = function() {
         sourceElement.setAttribute('src',`../_shared_assets/design/Forum Banner.png`);
     };
